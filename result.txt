@@ -1,0 +1,284 @@
+// Я голосую за Worms или Mario. Или танчики старые :)
+
+//////////////////////////////////////////////////////////////////////////////
+// /Users/bobah/OneDrive/Learning/geekbrains/SimpleAndroidGame/homework1/core/src/com/mygdx/game/Hero.java
+
+package com.mygdx.game;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Circle;
+import com.badlogic.gdx.math.Vector2;
+
+public class Hero {
+    private Texture texture;
+    private Vector2 position;
+    private float speed;
+
+    protected Circle collider;
+
+    public Hero() {
+        texture = new Texture("ship64.png");
+        position = new Vector2(640.0f, 360.0f);
+        speed = 300.0f;
+
+        collider = new Circle(position.x - 32, position.y - 32, 32);
+    }
+
+    public void render(SpriteBatch batch) {
+        batch.draw(texture, position.x - 32.0f, position.y - 32.0f);
+    }
+
+    public void update(float dt) {
+        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+            position.x += speed * dt;
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+            position.x -= speed * dt;
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
+            position.y += speed * dt;
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+            position.y -= speed * dt;
+        }
+        if (Gdx.input.isTouched()) {
+            if (Gdx.input.getX() > position.x) {
+                position.x += speed * dt;
+            }
+            if (Gdx.input.getX() < position.x) {
+                position.x -= speed * dt;
+            }
+            if (720.0f - Gdx.input.getY() > position.y) {
+                position.y += speed * dt;
+            }
+            if (720.0f - Gdx.input.getY() < position.y) {
+                position.y -= speed * dt;
+            }
+        }
+
+        checkWindowBounds();
+
+        collider.x = position.x - 32;
+        collider.y = position.y - 32;
+    }
+
+    private void checkWindowBounds() {
+        if (position.x + 32 >= 1280) {
+            position.x = 1280 - 32;
+        }
+
+        if (position.x - 32 < 0) {
+            position.x = 32;
+        }
+
+        if (position.y + 23 >= 720) {
+            position.y = 19;
+        }
+
+        if (position.y - 19 < 0) {
+            position.y = 697;
+        }
+    }
+}
+
+
+// End of file /Users/bobah/OneDrive/Learning/geekbrains/SimpleAndroidGame/homework1/core/src/com/mygdx/game/Hero.java
+//////////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////////////
+// /Users/bobah/OneDrive/Learning/geekbrains/SimpleAndroidGame/homework1/core/src/com/mygdx/game/Meteor.java
+
+package com.mygdx.game;
+
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Circle;
+import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
+
+public class Meteor {
+    private Vector2 position;
+    private Texture texture;
+    private float speed;
+    private float rotationSpeed;
+    private float rotation;
+    private int meteorType;
+
+    protected Circle collider;
+
+    public Meteor() {
+        position = new Vector2(1280 + 32, MathUtils.random(32, 698));
+        texture = new Texture("asteroids64.png");
+        this.speed = MathUtils.random(150f, 200f);
+        this.rotationSpeed = MathUtils.random(40f, 80f);
+        meteorType = MathUtils.random(0, 3);
+
+        collider = new Circle(position.x - 32, position.y - 32, 32);
+    }
+
+    public void render(SpriteBatch batch) {
+        batch.draw(texture, position.x - 32, position.y - 32, 32, 32,
+                64, 64, 1, 1, rotation,
+                meteorType * 64, 0, 64, 64, false, false);
+    }
+
+    public void update(float dt) {
+        position.x -= speed * dt;
+        rotation += rotationSpeed * dt;
+
+        if (position.x < -32) {
+            setInitialPosition();
+        }
+
+        collider.x = position.x - 32;
+        collider.y = position.y - 32;
+    }
+
+    public void setInitialPosition() {
+        position.x = 1280 + 32;
+        position.y = MathUtils.random(32, 698);
+        speed = MathUtils.random(150f, 200f);
+        rotationSpeed = MathUtils.random(40f, 80f);
+        meteorType = MathUtils.random(0, 3);
+    }
+}
+
+
+// End of file /Users/bobah/OneDrive/Learning/geekbrains/SimpleAndroidGame/homework1/core/src/com/mygdx/game/Meteor.java
+//////////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////////////
+// /Users/bobah/OneDrive/Learning/geekbrains/SimpleAndroidGame/homework1/core/src/com/mygdx/game/MyGdxGame.java
+
+package com.mygdx.game;
+
+import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+
+public class MyGdxGame extends ApplicationAdapter {
+    SpriteBatch batch;
+    Background background;
+    Hero hero;
+    Meteor meteor;
+
+    // Разобраться с кодом
+    // Не давать кораблю вылетать за лвую и правую сторону экрана
+    // Верхнюю и нижнюю сторону экрана корабль должен пролетать насквозь
+    // * Добавить астероид, который летает по экрану по типу звезд
+    // и проверять столкновение этого астероида с кораблем, при столкновении
+    // "пересоздавать" астероид
+
+    // Варианты игры: Гонки, Герои 3, Марио, RTS, tower defence, косм. стрелялка вид (сбоку/сверху)
+    // worms, battle toads
+
+    @Override
+    public void create() {
+        batch = new SpriteBatch();
+        background = new Background();
+        hero = new Hero();
+        meteor = new Meteor();
+    }
+
+    @Override
+    public void render() {
+        float dt = Gdx.graphics.getDeltaTime();
+        update(dt);
+        Gdx.gl.glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        batch.begin();
+        background.render(batch);
+        meteor.render(batch);
+        hero.render(batch);
+        batch.end();
+    }
+
+    public void update(float dt) {
+        background.update(dt);
+        meteor.update(dt);
+        hero.update(dt);
+
+        if (hero.collider.overlaps(meteor.collider)) {
+            meteor.setInitialPosition();
+        }
+    }
+
+    @Override
+    public void dispose() {
+        batch.dispose();
+    }
+}
+
+
+// End of file /Users/bobah/OneDrive/Learning/geekbrains/SimpleAndroidGame/homework1/core/src/com/mygdx/game/MyGdxGame.java
+//////////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////////////
+// /Users/bobah/OneDrive/Learning/geekbrains/SimpleAndroidGame/homework1/core/src/com/mygdx/game/Background.java
+
+package com.mygdx.game;
+
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
+
+public class Background {
+    private class Star {
+        private float x, y;
+        private float speed;
+
+        public Star() {
+            this.x = MathUtils.random(0, 1280);
+            this.y = MathUtils.random(0, 720);
+            this.speed = MathUtils.random(50.0f, 120.0f);
+        }
+
+        public void update(float dt) {
+            x -= speed * dt;
+            if (x < -16) {
+                x = 1280.0f;
+                y = MathUtils.random(0, 720);
+                speed = MathUtils.random(50.0f, 120.0f);
+            }
+        }
+    }
+
+    private Texture texture;
+    private Texture textureStar;
+    private Star[] stars;
+
+    public Background() {
+        this.texture = new Texture("bg.png");
+        this.textureStar = new Texture("star16.png");
+        this.stars = new Star[400];
+        for (int i = 0; i < stars.length; i++) {
+            stars[i] = new Star();
+        }
+    }
+
+    public void render(SpriteBatch batch) {
+        batch.draw(texture, 0, 0);
+        for (int i = 0; i < stars.length; i++) {
+            float scale = stars[i].speed / 150.0f;
+            if (MathUtils.random(0, 500) < 2) {
+                scale *= 1.5f;
+            }
+            batch.draw(textureStar, stars[i].x - 8, stars[i].y - 8, 8, 8, 16, 16, scale, scale, 0, 0, 0, 16, 16, false, false);
+        }
+    }
+
+    public void update(float dt) {
+        for (int i = 0; i < stars.length; i++) {
+            stars[i].update(dt);
+        }
+    }
+}
+
+
+// End of file /Users/bobah/OneDrive/Learning/geekbrains/SimpleAndroidGame/homework1/core/src/com/mygdx/game/Background.java
+//////////////////////////////////////////////////////////////////////////////
