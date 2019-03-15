@@ -1,4 +1,4 @@
-// Я голосую за Worms или Mario. Или танчики стыре :)
+// Я голосую за Worms или Mario. Или танчики старые :)
 
 //////////////////////////////////////////////////////////////////////////////
 // /Users/bobah/OneDrive/Learning/geekbrains/SimpleAndroidGame/homework1/core/src/com/mygdx/game/Hero.java
