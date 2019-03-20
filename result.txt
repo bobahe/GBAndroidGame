@@ -1,0 +1,132 @@
+
+//////////////////////////////////////////////////////////////////////////////
+// /Users/bobah/OneDrive/Learning/geekbrains/Android game/homework2/core/src/com/mygdx/game/Cannonball.java
+
+package com.mygdx.game;
+
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
+
+public class Cannonball {
+    Vector2 position;
+    Vector2 velocity;
+    TextureRegion region;
+    Vector2 mousePosition;
+    Vector2 tmp;
+
+    public Cannonball(TextureRegion region) {
+        this.position = new Vector2(-32, -32);
+        this.velocity = new Vector2(0, 0);
+        this.region = region;
+        this.mousePosition = new Vector2(0, 0);
+        this.tmp = new Vector2(0, 0);
+    }
+
+    public void render(SpriteBatch batch) {
+        batch.draw(region, position.x - 32, position.y - 32);
+    }
+
+    public void update(float dt) {
+        position.mulAdd(velocity, dt);
+
+        velocity.y -= 300.0f * dt;
+        velocity.x *= 0.997f;
+
+        if (velocity.x < 10 && velocity.y < 10) {
+            setInitialPosition();
+        }
+
+        if (position.y < 32.0f) {
+            position.y = 32.0f;
+            velocity.y *= -0.7f;
+        }
+    }
+
+    private void setInitialPosition() {
+        position.x = -32;
+        position.y = -32;
+        velocity.set(0, 0);
+    }
+
+    public void shoot(float x, float y) {
+        if (position.x >= 1280 + 32 || position.x <= -32) {
+            setInitialPosition();
+
+            mousePosition.x = x;
+            mousePosition.y = y;
+
+            tmp.set(mousePosition);
+            tmp.sub(position);
+            tmp.nor();
+            tmp.scl(1200.0f);
+
+            velocity.add(tmp);
+        }
+    }
+}
+
+
+// End of file /Users/bobah/OneDrive/Learning/geekbrains/Android game/homework2/core/src/com/mygdx/game/Cannonball.java
+//////////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////////////
+// /Users/bobah/OneDrive/Learning/geekbrains/Android game/homework2/core/src/com/mygdx/game/VectorGame.java
+
+package com.mygdx.game;
+
+import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+
+public class VectorGame extends ApplicationAdapter {
+    // Домашнее задание:
+    // У нас есть пушка в левом нижнем углу экрана (пушку можно не рисовать)
+    // Кликая мышкой по экрану пушка должна стрельнуть камнем в этом направлении
+    // На камень действует сила тяжести
+    // Камнем можно повторно стрельнуть, только если он вылетел за пределы экрана
+    SpriteBatch batch;
+    Texture textureAsteroids;
+    TextureRegion astReg;
+    Cannonball cannonball;
+
+
+    @Override
+    public void create() {
+        batch = new SpriteBatch();
+        textureAsteroids = new Texture("asteroids64.png");
+        astReg = new TextureRegion(textureAsteroids, 0, 0, 64, 64);
+        cannonball = new Cannonball(astReg);
+    }
+
+    @Override
+    public void render() {
+        float dt = Gdx.graphics.getDeltaTime();
+        update(dt);
+        Gdx.gl.glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        batch.begin();
+        cannonball.render(batch);
+        batch.end();
+    }
+
+    public void update(float dt) {
+        cannonball.update(dt);
+
+        if (Gdx.input.isTouched()) {
+            cannonball.shoot(Gdx.input.getX(), 720 - Gdx.input.getY());
+        }
+    }
+
+    @Override
+    public void dispose() {
+        batch.dispose();
+    }
+}
+
+
+// End of file /Users/bobah/OneDrive/Learning/geekbrains/Android game/homework2/core/src/com/mygdx/game/VectorGame.java
+//////////////////////////////////////////////////////////////////////////////
