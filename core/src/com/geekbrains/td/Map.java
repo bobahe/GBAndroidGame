@@ -1,5 +1,6 @@
 package com.geekbrains.td;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -20,15 +21,18 @@ public class Map {
     private TextureRegion textureRegionRoad;
     private TextureRegion textureRegionCursor;
 
+    private GameScreen screen;
+
     private int selectedX = 0;
     private int selectedY = 0;
 
-    public Map(String mapName, TextureAtlas textureAtlas) {
+    public Map(GameScreen screen, String mapName, TextureAtlas textureAtlas) {
         data = new byte[MAP_WIDTH][MAP_HEIGHT];
         textureRegionGrass = textureAtlas.findRegion("grass");
         textureRegionRoad = textureAtlas.findRegion("road");
         textureRegionCursor = textureAtlas.findRegion("cursor");
         loadMapFromFile(mapName);
+        this.screen = screen;
     }
 
     public void render(SpriteBatch batch) {
@@ -49,6 +53,10 @@ public class Map {
 
     public void update(float dt) {
         if (Gdx.input.justTouched()) {
+            if (selectedX == Gdx.input.getX() / 80 && selectedY == (720 - Gdx.input.getY()) / 80) {
+                screen.getTurret().setTurretPosition(selectedX, selectedY);
+            }
+
             selectedX = Gdx.input.getX() / 80;
             selectedY = (720 - Gdx.input.getY()) / 80;
         }

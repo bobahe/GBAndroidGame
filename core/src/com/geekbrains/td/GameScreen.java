@@ -15,6 +15,10 @@ public class GameScreen implements Screen {
         return monster;
     }
 
+    public Turret getTurret() {
+        return turret;
+    }
+
     public GameScreen(SpriteBatch batch) {
         this.batch = batch;
     }
@@ -22,7 +26,7 @@ public class GameScreen implements Screen {
     @Override
     public void show() {
         TextureAtlas atlas = new TextureAtlas("images/game.pack");
-        this.map = new Map("level01.map", atlas);
+        this.map = new Map(this,"level01.map", atlas);
         this.monster = new Monster(this, atlas);
         this.turret = new Turret(this, atlas);
     }

@@ -25,4 +25,9 @@ public class Turret {
     public void update(float dt) {
         angle += 180.0 * dt;
     }
+
+    public void setTurretPosition(int cellX, int cellY) {
+        this.cellX = cellX;
+        this.cellY = cellY;
+    }
 }
