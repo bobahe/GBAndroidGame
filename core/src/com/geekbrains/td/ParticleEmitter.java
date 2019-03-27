@@ -7,7 +7,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 
 /**
- * Created by FlameXander on 02.07.2017.
+ * Представляет пул частиц и реализует их отрисовку
  */
 public class ParticleEmitter extends ObjectPool<Particle> {
     private TextureRegion oneParticle;
@@ -43,6 +43,24 @@ public class ParticleEmitter extends ObjectPool<Particle> {
         batch.setColor(1.0f, 1.0f, 1.0f, 1.0f);
     }
 
+    /**
+     * Устанавливает новые параметры для взятой из пула частицы
+     * @param x координата х
+     * @param y координата y
+     * @param vx скорость по оси х
+     * @param vy скорость по оси y
+     * @param timeMax максимальное время жизни частицы
+     * @param size1 начальный размер частицы
+     * @param size2 конечный размер частицы
+     * @param r1 красная составляющая начального цвета
+     * @param g1 зеленая составляющая начального цвета
+     * @param b1 синяя составляющая начального цвета
+     * @param a1 альфа составляющая начального цвета
+     * @param r2 красная составляющая начального цвета
+     * @param g2 зеленая составляющая начального цвета
+     * @param b2 синяя составляющая начального цвета
+     * @param a2 альфа составляющая начального цвета
+     */
     public void setup(float x, float y, float vx, float vy, float timeMax, float size1, float size2, float r1, float g1, float b1, float a1, float r2, float g2, float b2, float a2) {
         Particle item = getActiveElement();
         item.init(x, y, vx, vy, timeMax, size1, size2, r1, g1, b1, a1, r2, g2, b2, a2);
@@ -59,6 +77,13 @@ public class ParticleEmitter extends ObjectPool<Particle> {
         }
     }
 
+    /**
+     * Пересчитывает размер, цвет частицы в зависмости от времени
+     * @param value1 актуальный размер
+     * @param value2 конечный размер
+     * @param point коэффициент времени жизни
+     * @return размер или цвет частицы
+     */
     public float lerp(float value1, float value2, float point) {
         return value1 + (value2 - value1) * point;
     }

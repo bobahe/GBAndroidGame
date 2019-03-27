@@ -1,12 +1,17 @@
 package com.geekbrains.td;
 
-import com.badlogic.gdx.utils.Pool;
-
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Реализует паттерн пул объектов. Используется для повторного использования уже созданных объектов.
+ * Если в пуле свободных объектов пусто, то происходит создание необходимого объекта.
+ * @param <T>
+ */
 public abstract class ObjectPool<T extends Poolable> {
+    // пул активных (используемых) объектов
     protected List<T> activeList;
+    // пул неиспользуемых объектов
     protected List<T> freeList;
 
     public List<T> getActiveList() {
@@ -17,8 +22,17 @@ public abstract class ObjectPool<T extends Poolable> {
         return freeList;
     }
 
+    /**
+     * Создает объект, если он отсутствует в пуле неиспользуемых объектов.
+     * Требует переопределения в классах наследниках.
+     * @return
+     */
     protected abstract T newObject();
 
+    /**
+     * Переносит объект из пула используемых в пул неиспользуемых
+     * @param index
+     */
     public void free(int index) {
         freeList.add(activeList.remove(index));
     }
@@ -36,6 +50,10 @@ public abstract class ObjectPool<T extends Poolable> {
         }
     }
 
+    /**
+     * Получает из пула объект для использования. Если объекта нет, то создает его и помещает в пул используемых
+     * @return
+     */
     public T getActiveElement() {
         if (freeList.size() == 0) {
             freeList.add(newObject());
@@ -45,6 +63,9 @@ public abstract class ObjectPool<T extends Poolable> {
         return temp;
     }
 
+    /**
+     * Проверяет пул используемых объектов и помещает неиспользуемые в соответствующий пул
+     */
     public void checkPool() {
         for (int i = activeList.size() - 1; i >= 0; i--) {
             if (!activeList.get(i).isActive()) {

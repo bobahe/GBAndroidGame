@@ -3,6 +3,9 @@ package com.geekbrains.td;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Pool;
 
+/**
+ * Представляет частицу
+ */
 public class Particle implements Poolable {
     private Vector2 position;
     private Vector2 velocity;
@@ -83,6 +86,24 @@ public class Particle implements Poolable {
         size2 = 1.0f;
     }
 
+    /**
+     * Инициализирует частицу необходимыми параметрами
+     * @param x координата х
+     * @param y координата y
+     * @param vx скорость по оси х
+     * @param vy скорость по оси y
+     * @param timeMax максимальное время жизни частицы
+     * @param size1 начальный размер частицы
+     * @param size2 конечный размер частицы
+     * @param r1 красная составляющая начального цвета
+     * @param g1 зеленая составляющая начального цвета
+     * @param b1 синяя составляющая начального цвета
+     * @param a1 альфа составляющая начального цвета
+     * @param r2 красная составляющая начального цвета
+     * @param g2 зеленая составляющая начального цвета
+     * @param b2 синяя составляющая начального цвета
+     * @param a2 альфа составляющая начального цвета
+     */
     public void init(float x, float y, float vx, float vy, float timeMax, float size1, float size2, float r1, float g1, float b1, float a1, float r2, float g2, float b2, float a2) {
         this.position.x = x;
         this.position.y = y;
@@ -103,10 +124,17 @@ public class Particle implements Poolable {
         this.active = true;
     }
 
+    /**
+     * Помечает частицу как неактивную. Необходимо для работы с пулом объектов
+     */
     public void deactivate() {
         active = false;
     }
 
+    /**
+     * Пересчитывает координаты и время жизни частицы. Если время жизни вышло, то помечает частицу как неактивную
+     * @param dt
+     */
     public void update(float dt) {
         time += dt;
         position.mulAdd(velocity, dt);
