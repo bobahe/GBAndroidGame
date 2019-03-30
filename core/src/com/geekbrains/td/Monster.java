@@ -1,9 +1,8 @@
 package com.geekbrains.td;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Vector2;
 
 import java.util.ArrayList;
@@ -24,6 +23,8 @@ public class Monster implements Poolable {
     private int hp;
     private int hpMax;
 
+    private Circle solidBody;
+
     private boolean active;
 
     @Override
@@ -33,6 +34,10 @@ public class Monster implements Poolable {
 
     public Vector2 getPosition() {
         return position;
+    }
+
+    public Circle getSolidBody() {
+        return solidBody;
     }
 
     public Monster(GameScreen gameScreen) {
@@ -46,6 +51,7 @@ public class Monster implements Poolable {
         this.hpMax = 100;
         this.hp = this.hpMax;
         this.active = false;
+        this.solidBody = new Circle(this.position.x, this.position.y, 32);
     }
 
     public void activate(float x, float y) {
@@ -87,6 +93,7 @@ public class Monster implements Poolable {
     public void update(float dt) {
         velocity.set(destination).sub(position).nor().scl(100.0f);
         position.mulAdd(velocity, dt);
+        this.solidBody.set(this.position.x + 32, this.position.y + 32, 32);
         if (position.dst(destination) < 2.0f) {
             getNextPoint();
         }

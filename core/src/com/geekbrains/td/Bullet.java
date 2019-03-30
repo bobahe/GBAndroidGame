@@ -17,8 +17,12 @@ public class Bullet implements Poolable {
         return velocity;
     }
 
+    public Circle getSolidBody() {
+        return solidBody;
+    }
+
     public void updateSolidBodyPosition() {
-        this.solidBody.set(this.position.x - 8, this.position.y - 8, 16);
+        this.solidBody.set(this.position.x + 8, this.position.y + 8, 16);
     }
 
     @Override
