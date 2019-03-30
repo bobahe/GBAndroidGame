@@ -36,6 +36,7 @@ public class BulletEmitter extends ObjectPool<Bullet> {
         for (int i = 0; i < activeList.size(); i++) {
             Bullet b = activeList.get(i);
             b.getPosition().mulAdd(b.getVelocity(), dt);
+            b.updateSolidBodyPosition();
             gameScreen.getParticleEmitter().setup(b.getPosition().x, b.getPosition().y, MathUtils.random(-25, 25), MathUtils.random(-25, 25), 0.1f,1.2f,0.2f,1,0,0,1,1,1,0,1);
         }
     }
