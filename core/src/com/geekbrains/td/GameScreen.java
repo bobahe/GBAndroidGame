@@ -22,7 +22,8 @@ public class GameScreen implements Screen {
     private BitmapFont font24;
     private int selectedCellX, selectedCellY;
     private float monsterTimer;
-    private int score;
+
+    private Player player;
 
     public Map getMap() {
         return map;
@@ -47,6 +48,7 @@ public class GameScreen implements Screen {
 
     @Override
     public void show() {
+        this.player = new Player();
         mousePosition = new Vector2(0, 0);
         InputProcessor myProc = new InputAdapter() {
             @Override
@@ -92,7 +94,7 @@ public class GameScreen implements Screen {
         bulletEmitter.render(batch);
         particleEmitter.render(batch);
 
-        font24.draw(batch, "SCORE: " + score, 20, 700);
+        font24.draw(batch, "SCORE: " + player.getScore() + "    HP: " + player.getHp() + "    MONEY: " + player.getCash(), 20, 700);
         batch.end();
     }
 
@@ -121,6 +123,15 @@ public class GameScreen implements Screen {
             if (!map.isCellEmpty((int) (b.getPosition().x / 80), (int) (b.getPosition().y / 80))) {
                 b.deactivate();
             }
+
+            for (int j = 0; j < monsterEmitter.getActiveList().size(); j++) {
+                Monster m = monsterEmitter.getActiveList().get(j);
+
+                if (b.getSolidBody().overlaps(m.getSolidBody())) {
+                    b.deactivate();
+                    m.damaged(25);
+                }
+            }
         }
     }
 
@@ -130,6 +141,15 @@ public class GameScreen implements Screen {
             monsterTimer = 0;
             monsterEmitter.setup(15, MathUtils.random(0, 8));
         }
+    }
+
+    public void monsterKilled() {
+        player.increaseScore(1);
+        player.increaseCash(100);
+    }
+
+    public void monsterEnteredTower() {
+        player.decreaseHp(1);
     }
 
     @Override

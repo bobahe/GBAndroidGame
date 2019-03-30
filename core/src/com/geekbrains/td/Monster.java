@@ -93,9 +93,29 @@ public class Monster implements Poolable {
     public void update(float dt) {
         velocity.set(destination).sub(position).nor().scl(100.0f);
         position.mulAdd(velocity, dt);
-        this.solidBody.set(this.position.x + 32, this.position.y + 32, 32);
+        this.solidBody.set(this.position.x + 32, this.position.y + 32, 26);
+
+        if (position.x < 42) {
+            deactivate();
+            gameScreen.monsterEnteredTower();
+        }
+
         if (position.dst(destination) < 2.0f) {
             getNextPoint();
+        }
+
+    }
+
+    public void deactivate() {
+        this.active = false;
+    }
+
+    public void damaged(int hp) {
+        this.hp -= hp;
+
+        if (this.hp <= 0) {
+            deactivate();
+            gameScreen.monsterKilled();
         }
     }
 }
