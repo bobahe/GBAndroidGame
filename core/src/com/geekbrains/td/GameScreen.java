@@ -206,6 +206,9 @@ public class GameScreen implements Screen {
     }
 
     public void upgradeTurret() {
+        if (turretEmitter.getTurretByCell(selectedCellX, selectedCellY) == null) {
+            return;
+        }
         switch (turretEmitter.getTurretByCell(selectedCellX, selectedCellY).getType()) {
             case RED:
                 if (player.isMoneyEnough(100)) {
