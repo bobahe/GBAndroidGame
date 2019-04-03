@@ -1,0 +1,226 @@
+// GameScreen.java
+package com.geekbrains.td;
+
+...
+
+public class GameScreen implements Screen {
+    ...
+
+    public void createGUI() {
+        ...
+
+        btnSetTurret1.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                setTurret(Turret.TurretType.RED);
+            }
+        });
+
+        btnSetTurret2.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                setTurret(Turret.TurretType.BLUE);
+            }
+        });
+
+        btnDestroyTurret.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                turretEmitter.destroyTurret(selectedCellX, selectedCellY);
+            }
+        });
+
+        btnUpgradeTurret.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                upgradeTurret();
+            }
+        });
+
+        stage.addActor(groupTurretSelection);
+        stage.addActor(groupTurretAction);
+
+//        upperPanel = new UpperPanel(playerInfo, stage, 0, 720 - 60);
+
+        btnSetTurret.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                groupTurretSelection.setVisible(!groupTurretSelection.isVisible());
+            }
+        });
+        skin.dispose();
+    }
+
+    ...
+
+    public void setTurret(Turret.TurretType type) {
+        switch (type) {
+            case RED:
+                if (player.isMoneyEnough(50)) {
+                    if (turretEmitter.setup(selectedCellX, selectedCellY, type)) {
+                        player.decreaseCoins(50);
+                    }
+                }
+                break;
+            case BLUE:
+                if (player.isMoneyEnough(100)) {
+                    if (turretEmitter.setup(selectedCellX, selectedCellY, type)) {
+                        player.decreaseCoins(100);
+                    }
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    public void upgradeTurret() {
+        switch (turretEmitter.getTurretByCell(selectedCellX, selectedCellY).getType()) {
+            case RED:
+                if (player.isMoneyEnough(100)) {
+                    if (turretEmitter.upgradeTurret(selectedCellX, selectedCellY)) {
+                        player.decreaseCoins(100);
+                    }
+                }
+                break;
+            case BLUE:
+                if (player.isMoneyEnough(150)) {
+                    if (turretEmitter.upgradeTurret(selectedCellX, selectedCellY)) {
+                        player.decreaseCoins(150);
+                    }
+                }
+                break;
+        }
+    }
+
+    ...
+}
+
+// TurretEmitter.java
+package com.geekbrains.td;
+
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+
+public class TurretEmitter extends ObjectPool<Turret> {
+    ...
+
+    public boolean setup(int cellX, int cellY, Turret.TurretType type) {
+        if (!canIDeployItHere(cellX, cellY)) {
+            return false;
+        }
+        Turret turret = getActiveElement();
+        turret.setup(cellX, cellY, type);
+        return true;
+    }
+
+    ...
+
+    public boolean canIDeployItHere(int cellX, int cellY) {
+        if (!gameScreen.getMap().isCellEmpty(cellX, cellY)) {
+            return false;
+        }
+        if (getTurretByCell(cellX, cellY) != null) {
+            return false;
+        }
+        return true;
+    }
+
+    public void destroyTurret(int cellX, int cellY) {
+        Turret t = getTurretByCell(cellX, cellY);
+        if (t != null) {
+            t.deactivate();
+        }
+    }
+
+    public boolean upgradeTurret(int cellX, int cellY) {
+        Turret t = getTurretByCell(cellX, cellY);
+        if (t != null) {
+            t.upgrade();
+            return true;
+        }
+
+        return false;
+    }
+
+    public Turret getTurretByCell(int cellX, int cellY) {
+        for (int i = 0; i < activeList.size(); i++) {
+            Turret t = activeList.get(i);
+            if (t.getCellX() == cellX && t.getCellY() == cellY) {
+                return t;
+            }
+        }
+
+        return null;
+    }
+}
+
+// Turret.java
+package com.geekbrains.td;
+
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
+
+public class Turret implements Poolable {
+    public enum TurretType {
+        RED,
+        BLUE,
+        RED_BETTER,
+        BLUE_BETTER
+    }
+
+    ...
+
+    private TurretType type;
+
+    ...
+
+    public TurretType getType() {
+        return type;
+    }
+
+    ...
+
+    public void deactivate() {
+        active = false;
+    }
+
+    public void setup(int cellX, int cellY, TurretType type) {
+        switch (type) {
+            case RED:
+                this.type = TurretType.RED;
+                this.texture = new TextureRegion(Assets.getInstance().getAtlas().findRegion("turrets"), 0, 0, 80, 80);
+                break;
+            case BLUE:
+                this.type = TurretType.BLUE;
+                this.texture = new TextureRegion(Assets.getInstance().getAtlas().findRegion("turrets"), 80, 0, 80, 80);
+                break;
+            default:
+                break;
+        }
+
+        this.cellX = cellX;
+        this.cellY = cellY;
+        this.position.set(cellX * 80 + 40, cellY * 80 + 40);
+        this.active = true;
+    }
+
+    ...
+
+    public void upgrade() {
+        switch (type) {
+            case RED:
+                type = TurretType.RED_BETTER;
+                this.texture = new TextureRegion(Assets.getInstance().getAtlas().findRegion("turrets"), 0, 80, 80, 80);
+                this.fireRate = 0.3f;
+                this.fireRadius = 600f;
+                break;
+            case BLUE:
+                type = TurretType.BLUE_BETTER;
+                this.texture = new TextureRegion(Assets.getInstance().getAtlas().findRegion("turrets"), 80, 80, 80, 80);
+                this.fireRate = 0.2f;
+                this.fireRadius = 700f;
+                break;
+        }
+    }
+}
