@@ -39,12 +39,27 @@ public class TurretEmitter extends ObjectPool<Turret> {
         if (!gameScreen.getMap().isCellEmpty(cellX, cellY)) {
             return false;
         }
+        if (getTurretByCell(cellX, cellY) != null) {
+            return false;
+        }
+        return true;
+    }
+
+    public void destroyTurret(int cellX, int cellY) {
+        Turret t = getTurretByCell(cellX, cellY);
+        if (t != null) {
+            t.deactivate();
+        }
+    }
+
+    private Turret getTurretByCell(int cellX, int cellY) {
         for (int i = 0; i < activeList.size(); i++) {
             Turret t = activeList.get(i);
             if (t.getCellX() == cellX && t.getCellY() == cellY) {
-                return false;
+                return t;
             }
         }
-        return true;
+
+        return null;
     }
 }

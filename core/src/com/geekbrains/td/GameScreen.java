@@ -134,12 +134,12 @@ public class GameScreen implements Screen {
             }
         });
 
-//        btnDestroyTurret.addListener(new ChangeListener() {
-//            @Override
-//            public void changed(ChangeEvent event, Actor actor) {
-//                turretEmitter.destroyTurret(selectedCellX, selectedCellY);
-//            }
-//        });
+        btnDestroyTurret.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                turretEmitter.destroyTurret(selectedCellX, selectedCellY);
+            }
+        });
 //
 //        btnUpgradeTurret.addListener(new ChangeListener() {
 //            @Override

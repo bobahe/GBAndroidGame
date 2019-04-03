@@ -57,6 +57,10 @@ public class Turret implements Poolable {
         return active;
     }
 
+    public void deactivate() {
+        active = false;
+    }
+
     public void setup(int cellX, int cellY, TurretType type) {
         switch (type) {
             case RED:
