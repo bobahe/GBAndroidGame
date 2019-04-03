@@ -140,13 +140,13 @@ public class GameScreen implements Screen {
                 turretEmitter.destroyTurret(selectedCellX, selectedCellY);
             }
         });
-//
-//        btnUpgradeTurret.addListener(new ChangeListener() {
-//            @Override
-//            public void changed(ChangeEvent event, Actor actor) {
-//                turretEmitter.upgradeTurret(playerInfo, selectedCellX, selectedCellY);
-//            }
-//        });
+
+        btnUpgradeTurret.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                upgradeTurret();
+            }
+        });
 
         stage.addActor(groupTurretSelection);
         stage.addActor(groupTurretAction);
@@ -201,6 +201,25 @@ public class GameScreen implements Screen {
                 }
                 break;
             default:
+                break;
+        }
+    }
+
+    public void upgradeTurret() {
+        switch (turretEmitter.getTurretByCell(selectedCellX, selectedCellY).getType()) {
+            case RED:
+                if (player.isMoneyEnough(100)) {
+                    if (turretEmitter.upgradeTurret(selectedCellX, selectedCellY)) {
+                        player.decreaseCoins(100);
+                    }
+                }
+                break;
+            case BLUE:
+                if (player.isMoneyEnough(150)) {
+                    if (turretEmitter.upgradeTurret(selectedCellX, selectedCellY)) {
+                        player.decreaseCoins(150);
+                    }
+                }
                 break;
         }
     }

@@ -1,15 +1,15 @@
 package com.geekbrains.td;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 
 public class Turret implements Poolable {
     public enum TurretType {
         RED,
-        BLUE
+        BLUE,
+        RED_BETTER,
+        BLUE_BETTER
     }
 
     private GameScreen gameScreen;
@@ -21,6 +21,8 @@ public class Turret implements Poolable {
     private float angle;
     private float rotationSpeed;
     private float fireRadius;
+
+    private TurretType type;
 
     private float fireRate;
     private float fireTime;
@@ -35,6 +37,10 @@ public class Turret implements Poolable {
 
     public int getCellY() {
         return cellY;
+    }
+
+    public TurretType getType() {
+        return type;
     }
 
     public Turret(GameScreen gameScreen) {
@@ -64,9 +70,11 @@ public class Turret implements Poolable {
     public void setup(int cellX, int cellY, TurretType type) {
         switch (type) {
             case RED:
+                this.type = TurretType.RED;
                 this.texture = new TextureRegion(Assets.getInstance().getAtlas().findRegion("turrets"), 0, 0, 80, 80);
                 break;
             case BLUE:
+                this.type = TurretType.BLUE;
                 this.texture = new TextureRegion(Assets.getInstance().getAtlas().findRegion("turrets"), 80, 0, 80, 80);
                 break;
             default:
@@ -146,6 +154,23 @@ public class Turret implements Poolable {
             fireTime = 0.0f;
             float rad = (float) Math.toRadians(angle);
             gameScreen.getBulletEmitter().setup(position.x, position.y, 400.0f * (float) Math.cos(rad), 400.0f * (float) Math.sin(rad), target);
+        }
+    }
+
+    public void upgrade() {
+        switch (type) {
+            case RED:
+                type = TurretType.RED_BETTER;
+                this.texture = new TextureRegion(Assets.getInstance().getAtlas().findRegion("turrets"), 0, 80, 80, 80);
+                this.fireRate = 0.3f;
+                this.fireRadius = 600f;
+                break;
+            case BLUE:
+                type = TurretType.BLUE_BETTER;
+                this.texture = new TextureRegion(Assets.getInstance().getAtlas().findRegion("turrets"), 80, 80, 80, 80);
+                this.fireRate = 0.2f;
+                this.fireRadius = 700f;
+                break;
         }
     }
 }
