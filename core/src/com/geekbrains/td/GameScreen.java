@@ -123,14 +123,14 @@ public class GameScreen implements Screen {
         btnSetTurret1.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                setTurret();
+                setTurret(Turret.TurretType.RED);
             }
         });
 
         btnSetTurret2.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                setTurret();
+                setTurret(Turret.TurretType.BLUE);
             }
         });
 
@@ -184,11 +184,24 @@ public class GameScreen implements Screen {
         stage.draw();
     }
 
-    public void setTurret() {
-        if (player.isMoneyEnough(50)) {
-            if (turretEmitter.setup(selectedCellX, selectedCellY)) {
-                player.decreaseCoins(50);
-            }
+    public void setTurret(Turret.TurretType type) {
+        switch (type) {
+            case RED:
+                if (player.isMoneyEnough(50)) {
+                    if (turretEmitter.setup(selectedCellX, selectedCellY, type)) {
+                        player.decreaseCoins(50);
+                    }
+                }
+                break;
+            case BLUE:
+                if (player.isMoneyEnough(100)) {
+                    if (turretEmitter.setup(selectedCellX, selectedCellY, type)) {
+                        player.decreaseCoins(100);
+                    }
+                }
+                break;
+            default:
+                break;
         }
     }
 

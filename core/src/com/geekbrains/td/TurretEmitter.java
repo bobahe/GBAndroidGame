@@ -14,12 +14,12 @@ public class TurretEmitter extends ObjectPool<Turret> {
         return new Turret(gameScreen);
     }
 
-    public boolean setup(int cellX, int cellY) {
+    public boolean setup(int cellX, int cellY, Turret.TurretType type) {
         if (!canIDeployItHere(cellX, cellY)) {
             return false;
         }
         Turret turret = getActiveElement();
-        turret.setup(cellX, cellY);
+        turret.setup(cellX, cellY, type);
         return true;
     }
 

@@ -7,6 +7,11 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 
 public class Turret implements Poolable {
+    public enum TurretType {
+        RED,
+        BLUE
+    }
+
     private GameScreen gameScreen;
 
     private TextureRegion texture;
@@ -34,7 +39,7 @@ public class Turret implements Poolable {
 
     public Turret(GameScreen gameScreen) {
         this.gameScreen = gameScreen;
-        this.texture = new TextureRegion(Assets.getInstance().getAtlas().findRegion("turrets"), 0, 0, 80, 80);
+        //this.texture = new TextureRegion(Assets.getInstance().getAtlas().findRegion("turrets"), 0, 0, 80, 80);
         this.cellX = 8;
         this.cellY = 4;
         this.position = new Vector2(cellX * 80 + 40, cellY * 80 + 40);
@@ -52,7 +57,18 @@ public class Turret implements Poolable {
         return active;
     }
 
-    public void setup(int cellX, int cellY) {
+    public void setup(int cellX, int cellY, TurretType type) {
+        switch (type) {
+            case RED:
+                this.texture = new TextureRegion(Assets.getInstance().getAtlas().findRegion("turrets"), 0, 0, 80, 80);
+                break;
+            case BLUE:
+                this.texture = new TextureRegion(Assets.getInstance().getAtlas().findRegion("turrets"), 80, 0, 80, 80);
+                break;
+            default:
+                break;
+        }
+
         this.cellX = cellX;
         this.cellY = cellY;
         this.position.set(cellX * 80 + 40, cellY * 80 + 40);
