@@ -206,20 +206,21 @@ public class GameScreen implements Screen {
     }
 
     public void upgradeTurret() {
-        if (turretEmitter.getTurretByCell(selectedCellX, selectedCellY) == null) {
+        Turret t = turretEmitter.getTurretByCell(selectedCellX, selectedCellY);
+        if (t == null) {
             return;
         }
-        switch (turretEmitter.getTurretByCell(selectedCellX, selectedCellY).getType()) {
+        switch (t.getType()) {
             case RED:
                 if (player.isMoneyEnough(100)) {
-                    if (turretEmitter.upgradeTurret(selectedCellX, selectedCellY)) {
+                    if (t.upgrade()) {
                         player.decreaseCoins(100);
                     }
                 }
                 break;
             case BLUE:
                 if (player.isMoneyEnough(150)) {
-                    if (turretEmitter.upgradeTurret(selectedCellX, selectedCellY)) {
+                    if (t.upgrade()) {
                         player.decreaseCoins(150);
                     }
                 }

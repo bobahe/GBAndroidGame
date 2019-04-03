@@ -52,16 +52,6 @@ public class TurretEmitter extends ObjectPool<Turret> {
         }
     }
 
-    public boolean upgradeTurret(int cellX, int cellY) {
-        Turret t = getTurretByCell(cellX, cellY);
-        if (t != null) {
-            t.upgrade();
-            return true;
-        }
-
-        return false;
-    }
-
     public Turret getTurretByCell(int cellX, int cellY) {
         for (int i = 0; i < activeList.size(); i++) {
             Turret t = activeList.get(i);

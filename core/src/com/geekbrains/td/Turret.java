@@ -157,7 +157,7 @@ public class Turret implements Poolable {
         }
     }
 
-    public void upgrade() {
+    public boolean upgrade() {
         switch (type) {
             case RED:
                 type = TurretType.RED_BETTER;
@@ -171,6 +171,10 @@ public class Turret implements Poolable {
                 this.fireRate = 0.2f;
                 this.fireRadius = 700f;
                 break;
+            default:
+                return false;
         }
+
+        return true;
     }
 }
