@@ -34,6 +34,7 @@ public class GameScreen implements Screen {
     private Stage stage;
     private Group groupTurretAction;
     private Group groupTurretSelection;
+    private Group groupIngameMenu;
 
     public Map getMap() {
         return map;
@@ -103,9 +104,21 @@ public class GameScreen implements Screen {
         textButtonStyle.font = font24;
         skin.add("simpleSkin", textButtonStyle);
 
+        groupIngameMenu = new Group();
+        groupIngameMenu.setPosition(1100, 600);
+        Button btnExitToMainMenu = new TextButton("Main menu", skin, "simpleSkin");
+        btnExitToMainMenu.setPosition(0, 0);
+        groupIngameMenu.addActor(btnExitToMainMenu);
+
+        btnExitToMainMenu.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                ScreenManager.getInstance().changeScreen(ScreenManager.ScreenType.MENU);
+            }
+        });
+
         groupTurretAction = new Group();
         groupTurretAction.setPosition(250, 600);
-
         Button btnSetTurret = new TextButton("Set", skin, "simpleSkin");
         Button btnUpgradeTurret = new TextButton("Upg", skin, "simpleSkin");
         Button btnDestroyTurret = new TextButton("Dst", skin, "simpleSkin");
@@ -156,6 +169,7 @@ public class GameScreen implements Screen {
 
         stage.addActor(groupTurretSelection);
         stage.addActor(groupTurretAction);
+        stage.addActor(groupIngameMenu);
 
 //        upperPanel = new UpperPanel(playerInfo, stage, 0, 720 - 60);
 
@@ -165,6 +179,7 @@ public class GameScreen implements Screen {
                 groupTurretSelection.setVisible(!groupTurretSelection.isVisible());
             }
         });
+
         skin.dispose();
     }
 
