@@ -30,6 +30,7 @@ public class GameScreen implements Screen {
     private int selectedCellX, selectedCellY;
     private float monsterTimer;
     private Player player;
+    private MadKing king;
 
     private Stage stage;
     private Group groupTurretAction;
@@ -62,6 +63,7 @@ public class GameScreen implements Screen {
 
     @Override
     public void show() {
+        this.king = new MadKing(this);
         player = new Player();
         mousePosition = new Vector2(0, 0);
         this.particleEmitter = new ParticleEmitter();
@@ -198,6 +200,7 @@ public class GameScreen implements Screen {
         turretEmitter.render(batch);
         bulletEmitter.render(batch);
         particleEmitter.render(batch);
+        king.render(batch);
         player.renderInfo(batch, font24);
         infoEmitter.render(batch, font24);
         batch.end();
@@ -215,6 +218,7 @@ public class GameScreen implements Screen {
         checkCollisions();
         checkMonstersInCastle();
         infoEmitter.update(dt);
+        king.update(dt);
 
         monsterEmitter.checkPool();
         particleEmitter.checkPool();
