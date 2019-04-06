@@ -29,6 +29,9 @@ public class GameScreen implements Screen {
     private BitmapFont font24;
     private int selectedCellX, selectedCellY;
     private float monsterTimer;
+    private int waveLevel;
+    private float mainTimer;
+    private float supportTimer;
     private Player player;
     private MadKing king;
 
@@ -269,8 +272,16 @@ public class GameScreen implements Screen {
     }
 
     public void generateMonsters(float dt) {
+        mainTimer += dt;
+        supportTimer += dt;
+
+        if (supportTimer > 30.0f) {
+            supportTimer = 0;
+            waveLevel += (int) (mainTimer / 30) % 2;
+        }
+
         monsterTimer += dt;
-        if (monsterTimer > 0.1f) {
+        if (monsterTimer > 2.0f - waveLevel * 0.5f) {
             monsterTimer = 0;
             monsterEmitter.setup(15, MathUtils.random(0, 8));
         }
