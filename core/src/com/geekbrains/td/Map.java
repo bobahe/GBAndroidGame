@@ -18,8 +18,8 @@ public class Map {
     private final int ELEMENT_ROAD = 1;
     private final int ELEMENT_WALL = 2;
 
-    public final int CASTLE_X = 0;
-    public final int CASTLE_Y = 5;
+//    public final int CASTLE_X = 0;
+//    public final int CASTLE_Y = 5;
 
     private int[][] data;
     private TextureRegion textureRegionGrass;

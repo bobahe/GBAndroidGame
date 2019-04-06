@@ -2,7 +2,6 @@ package com.geekbrains.td;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 
@@ -17,7 +16,9 @@ public class MadKing {
 
     private Map map;
 
-    private Circle hitArea;
+    public Vector2 getPosition() {
+        return position;
+    }
 
     public MadKing(GameScreen gameScreen) {
         this.gameScreen = gameScreen;
@@ -28,7 +29,6 @@ public class MadKing {
         this.position = new Vector2(40, 360);
         this.destination = new Vector2(0, 0);
         this.velocity = new Vector2(0, 0);
-        this.hitArea = new Circle(0, 0, 0);
     }
 
     public void getNextPoint() {
@@ -48,6 +48,5 @@ public class MadKing {
         if (position.dst(destination) < 2.0f) {
             getNextPoint();
         }
-        this.hitArea.set(position.x, position.y, 32.0f);
     }
 }

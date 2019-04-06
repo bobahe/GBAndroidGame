@@ -61,6 +61,10 @@ public class GameScreen implements Screen {
         return infoEmitter;
     }
 
+    public MadKing getKing() {
+        return king;
+    }
+
     @Override
     public void show() {
         this.king = new MadKing(this);
@@ -232,7 +236,8 @@ public class GameScreen implements Screen {
     public void checkMonstersInCastle() {
         for (int i = 0; i < monsterEmitter.getActiveList().size(); i++) {
             Monster m = monsterEmitter.getActiveList().get(i);
-            if ((int) (m.getPosition().x / 80) == map.CASTLE_X && (int) (m.getPosition().y / 80) == map.CASTLE_Y) {
+            if ((int) (m.getPosition().x / 80) == (int) (king.getPosition().x / 80) &&
+                    (int) (m.getPosition().y / 80) == (int) (king.getPosition().y / 80)) {
                 player.decreaseHp(5);
                 m.deactivate();
             }

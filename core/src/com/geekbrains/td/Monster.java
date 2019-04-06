@@ -71,7 +71,8 @@ public class Monster implements Poolable {
     }
 
     public void getNextPoint() {
-        map.buildRoute(gameScreen.getMap().CASTLE_X, gameScreen.getMap().CASTLE_Y, (int) (position.x / 80), (int) (position.y / 80), destination);
+        map.buildRoute((int) (gameScreen.getKing().getPosition().x / 80),
+                (int) (gameScreen.getKing().getPosition().y / 80), (int) (position.x / 80), (int) (position.y / 80), destination);
 //        System.out.println(destination);
         destination.scl(80, 80).add(40, 40);
     }
