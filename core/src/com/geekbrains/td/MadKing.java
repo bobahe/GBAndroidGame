@@ -14,20 +14,16 @@ public class MadKing {
     private Vector2 velocity;
     private Vector2 destination;
 
-    private Map map;
-
     public Vector2 getPosition() {
         return position;
     }
 
     public MadKing(GameScreen gameScreen) {
         this.gameScreen = gameScreen;
-        this.map = gameScreen.getMap();
         this.texture = Assets.getInstance().getAtlas().findRegion("star16");
-//        this.textureHp = Assets.getInstance().getAtlas().findRegion("monsterHp");
-//        this.textureBackHp = Assets.getInstance().getAtlas().findRegion("monsterBackHP");
-        this.position = new Vector2(40, 360);
+        this.position = new Vector2(40, 320);
         this.destination = new Vector2(0, 0);
+        getNextPoint();
         this.velocity = new Vector2(0, 0);
     }
 
@@ -37,7 +33,7 @@ public class MadKing {
     }
 
     public void render(SpriteBatch batch) {
-        batch.draw(texture, position.x - 16, position.y - 16, 32, 32);
+        batch.draw(texture, position.x - 40, position.y - 40, 80, 80);
 //        batch.draw(textureBackHp, position.x - 30, position.y + 40 - 16);
 //        batch.draw(textureHp, position.x - 30 + 2, position.y + 40 - 14, 56 * ((float) hp / hpMax), 12);
     }
