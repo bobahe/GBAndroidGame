@@ -34,14 +34,17 @@ public class TurretEmitter extends ObjectPool<Turret> {
         return true;
     }
 
-    public void buildTurret(Player player, String turretTemplateName, int cellX, int cellY) {
+    public boolean buildTurret(Player player, String turretTemplateName, int cellX, int cellY) {
         TurretTemplate turretTemplate = templates.get(turretTemplateName);
         if (player.isMoneyEnough(turretTemplate.getPrice())) {
             if (setup(turretTemplate.getName(), cellX, cellY)) {
                 player.changeCoins(-turretTemplate.getPrice());
                 gameScreen.getInfoEmitter().setup(cellX * 80 + 40, cellY * 80 + 40, "-" + turretTemplate.getPrice());
+                return true;
             }
         }
+
+        return false;
     }
 
     public void upgradeTurret(Player player, int cellX, int cellY) {

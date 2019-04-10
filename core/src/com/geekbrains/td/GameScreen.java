@@ -1,17 +1,18 @@
 package com.geekbrains.td;
 
 import com.badlogic.gdx.*;
-import com.badlogic.gdx.graphics.Camera;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
@@ -28,6 +29,7 @@ public class GameScreen implements Screen {
     private InfoEmitter infoEmitter;
     private BitmapFont font18;
     private BitmapFont font24;
+    private BitmapFont font134;
     private int selectedCellX, selectedCellY;
     private float monsterTimer;
     private Player player;
@@ -36,6 +38,11 @@ public class GameScreen implements Screen {
     private Stage stage;
     private Group groupTurretAction;
     private Group groupTurretSelection;
+    private Group groupGameOver;
+
+    private String gameoverText = "GAME OVER";
+    private GlyphLayout layout;
+    private float gameoverTimer;
 
     public Map getMap() {
         return map;
@@ -68,17 +75,19 @@ public class GameScreen implements Screen {
     @Override
     public void show() {
         this.player = new Player();
-        this.king = new King();
         this.mousePosition = new Vector2(0, 0);
         this.particleEmitter = new ParticleEmitter();
         this.font18 = Assets.getInstance().getAssetManager().get("fonts/zorque18.ttf");
         this.font24 = Assets.getInstance().getAssetManager().get("fonts/zorque24.ttf");
+        this.font134 = Assets.getInstance().getAssetManager().get("fonts/zorque134.ttf");
         this.bulletEmitter = new BulletEmitter(this);
         this.map = new Map("level01.map");
         this.monsterEmitter = new MonsterEmitter(this);
         this.turretEmitter = new TurretEmitter(this);
         this.infoEmitter = new InfoEmitter(this);
         this.selectedCellTexture = Assets.getInstance().getAtlas().findRegion("cursor");
+        this.king = new King(this);
+        this.layout = new GlyphLayout(font134, gameoverText);
         this.createGUI();
     }
 
@@ -90,11 +99,31 @@ public class GameScreen implements Screen {
             public boolean touchDown(int screenX, int screenY, int pointer, int button) {
                 mousePosition.set(screenX, screenY);
                 ScreenManager.getInstance().getViewport().unproject(mousePosition);
-                if (selectedCellX == (int) (mousePosition.x / 80) && selectedCellY == (int) (mousePosition.y / 80)) {
-                    map.setWall((int) (mousePosition.x / 80), (int) (mousePosition.y / 80));
-                }
+//                if (selectedCellX == (int) (mousePosition.x / 80) && selectedCellY == (int) (mousePosition.y / 80)) {
+//                    map.setWall((int) (mousePosition.x / 80), (int) (mousePosition.y / 80));
+//                }
+
                 selectedCellX = (int) (mousePosition.x / 80);
                 selectedCellY = (int) (mousePosition.y / 80);
+
+                groupTurretAction.setPosition(selectedCellX * 80 - 20, selectedCellY * 80 + 60);
+                groupTurretSelection.setPosition(selectedCellX * 80 - 20, selectedCellY * 80 - 20);
+
+                if (!map.isCellEmpty(selectedCellX, selectedCellY)) {
+                    groupTurretSelection.setVisible(false);
+                    groupTurretAction.setVisible(false);
+                }
+
+                if (turretEmitter.findTurretInCell(selectedCellX, selectedCellY) == null && map.isCellEmpty(selectedCellX, selectedCellY)) {
+                    groupTurretAction.setVisible(false);
+                    groupTurretSelection.setVisible(true);
+                }
+
+                if (turretEmitter.findTurretInCell(selectedCellX, selectedCellY) != null) {
+                    groupTurretSelection.setVisible(false);
+                    groupTurretAction.setVisible(true);
+                }
+
                 return true;
             }
         };
@@ -105,46 +134,73 @@ public class GameScreen implements Screen {
         Skin skin = new Skin();
         skin.addRegions(Assets.getInstance().getAtlas());
 
-        TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
+        TextButton.TextButtonStyle setrebturretButton = new TextButton.TextButtonStyle();
+        TextButton.TextButtonStyle setblueturretButton = new TextButton.TextButtonStyle();
+        TextButton.TextButtonStyle upgradeturretButton = new TextButton.TextButtonStyle();
+        TextButton.TextButtonStyle destroyturretButton = new TextButton.TextButtonStyle();
 
-        textButtonStyle.up = skin.getDrawable("shortButton");
-        textButtonStyle.font = font24;
-        skin.add("simpleSkin", textButtonStyle);
+        setrebturretButton.up = skin.getDrawable("setredturret");
+        setblueturretButton.up = skin.getDrawable("setblueturret");
+        upgradeturretButton.up = skin.getDrawable("upgradeturret");
+        destroyturretButton.up = skin.getDrawable("destroyturret");
+
+        setrebturretButton.font = font18;
+        setblueturretButton.font = font18;
+        upgradeturretButton.font = font18;
+        destroyturretButton.font = font18;
+
+        skin.add("setredturretskin", setrebturretButton);
+        skin.add("setblurturretskin", setblueturretButton);
+        skin.add("upgradeturretskin", upgradeturretButton);
+        skin.add("destroyturretskin", destroyturretButton);
+
+        groupGameOver = new Group();
+        groupGameOver.setVisible(false);
+        Pixmap pixmap = new Pixmap(1,1, Pixmap.Format.RGBA8888);
+        pixmap.setColor(Color.BLACK);
+        pixmap.fillRectangle(0, 0, 1, 1);
+        Texture fillTexture=new Texture(pixmap);
+        pixmap.dispose();
+        Image fillImage=new Image(fillTexture);
+        fillImage.setSize(Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
+        fillImage.getColor().a=.7f;
+        groupGameOver.addActor(fillImage);
 
         groupTurretAction = new Group();
-        groupTurretAction.setPosition(250, 600);
-
-        Button btnSetTurret = new TextButton("Set", skin, "simpleSkin");
-        Button btnUpgradeTurret = new TextButton("Upg", skin, "simpleSkin");
-        Button btnDestroyTurret = new TextButton("Dst", skin, "simpleSkin");
-        btnSetTurret.setPosition(10, 10);
-        btnUpgradeTurret.setPosition(110, 10);
-        btnDestroyTurret.setPosition(210, 10);
-        groupTurretAction.addActor(btnSetTurret);
+        groupTurretAction.setVisible(false);
+        Button btnUpgradeTurret = new TextButton("", skin, "upgradeturretskin");
+        Button btnDestroyTurret = new TextButton("", skin, "destroyturretskin");
+        btnUpgradeTurret.setPosition(0, 0);
+        btnDestroyTurret.setPosition(80, 0);
         groupTurretAction.addActor(btnUpgradeTurret);
         groupTurretAction.addActor(btnDestroyTurret);
 
         groupTurretSelection = new Group();
         groupTurretSelection.setVisible(false);
-        groupTurretSelection.setPosition(250, 500);
-        Button btnSetTurret1 = new TextButton("T1", skin, "simpleSkin");
-        Button btnSetTurret2 = new TextButton("T2", skin, "simpleSkin");
-        btnSetTurret1.setPosition(10, 10);
-        btnSetTurret2.setPosition(110, 10);
+        Button btnSetTurret1 = new TextButton("", skin, "setredturretskin");
+        Button btnSetTurret2 = new TextButton("", skin, "setblurturretskin");
+        btnSetTurret1.setPosition(0, 0);
+        btnSetTurret2.setPosition(80, 0);
         groupTurretSelection.addActor(btnSetTurret1);
         groupTurretSelection.addActor(btnSetTurret2);
 
         btnSetTurret1.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                turretEmitter.buildTurret(player, "Red-Turret-I", selectedCellX, selectedCellY);
+                if (turretEmitter.buildTurret(player, "Red-Turret-I", selectedCellX, selectedCellY)) {
+                    groupTurretSelection.setVisible(false);
+                    groupTurretAction.setVisible(true);
+                }
             }
         });
 
         btnSetTurret2.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                turretEmitter.buildTurret(player, "Blue-Turret-I", selectedCellX, selectedCellY);
+                if (turretEmitter.buildTurret(player, "Blue-Turret-I", selectedCellX, selectedCellY)) {
+                    groupTurretSelection.setVisible(false);
+                    groupTurretAction.setVisible(true);
+                }
             }
         });
 
@@ -152,6 +208,8 @@ public class GameScreen implements Screen {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 turretEmitter.removeTurret(player, selectedCellX, selectedCellY);
+                groupTurretAction.setVisible(false);
+                groupTurretSelection.setVisible(true);
             }
         });
 
@@ -162,17 +220,10 @@ public class GameScreen implements Screen {
             }
         });
 
+        stage.addActor(groupGameOver);
         stage.addActor(groupTurretSelection);
         stage.addActor(groupTurretAction);
 
-//        upperPanel = new UpperPanel(playerInfo, stage, 0, 720 - 60);
-
-        btnSetTurret.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                groupTurretSelection.setVisible(!groupTurretSelection.isVisible());
-            }
-        });
         skin.dispose();
     }
 
@@ -196,27 +247,44 @@ public class GameScreen implements Screen {
         batch.end();
 
         stage.draw();
+
+        if (king.wasKilled()) {
+            batch.begin();
+            font134.draw(batch, layout, (1280 - layout.width) / 2, (720 + layout.height) / 2);
+            batch.end();
+        }
+
     }
 
     public void update(float dt) {
-        map.update(dt);
-        king.update(dt);
-        monsterEmitter.update(dt);
-        turretEmitter.update(dt);
-        particleEmitter.update(dt);
-        generateMonsters(dt);
-        bulletEmitter.update(dt);
-        checkCollisions();
-        checkMonstersInCastle();
-        infoEmitter.update(dt);
+        if (!king.wasKilled()) {
+            map.update(dt);
+            king.update(dt);
+            monsterEmitter.update(dt);
+            turretEmitter.update(dt);
+            particleEmitter.update(dt);
+            generateMonsters(dt);
+            bulletEmitter.update(dt);
+            checkCollisions();
+            checkMonstersInCastle();
+            infoEmitter.update(dt);
 
-        monsterEmitter.checkPool();
-        particleEmitter.checkPool();
-        bulletEmitter.checkPool();
-        turretEmitter.checkPool();
-        infoEmitter.checkPool();
+            monsterEmitter.checkPool();
+            particleEmitter.checkPool();
+            bulletEmitter.checkPool();
+            turretEmitter.checkPool();
+            infoEmitter.checkPool();
 
-        stage.act(dt);
+            stage.act(dt);
+        } else {
+            Gdx.input.setInputProcessor(stage);
+            groupGameOver.setVisible(true);
+            stage.act(dt);
+            gameoverTimer += dt;
+            if (gameoverTimer > 5.0f) {
+                ScreenManager.getInstance().changeScreen(ScreenManager.ScreenType.MENU);
+            }
+        }
     }
 
     public void checkMonstersInCastle() {

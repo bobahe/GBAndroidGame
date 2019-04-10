@@ -45,6 +45,7 @@ public class Assets {
                 createStandardFont(18);
                 createStandardFont(24);
                 createStandardFont(36);
+                createStandardFont(134);
                 break;
         }
     }

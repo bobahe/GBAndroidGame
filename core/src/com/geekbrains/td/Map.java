@@ -103,7 +103,7 @@ public class Map {
 
         int lastPoint = -1;
 
-        for (int i = 1; i < 100; i++) { // todo почему 100?
+        for (int i = 1; i < 100; i++) {
             for (int x = 0; x < MAP_WIDTH; x++) {
                 for (int y = 0; y < MAP_HEIGHT; y++) {
                     if (routeHelperArray[x][y] == i) {
