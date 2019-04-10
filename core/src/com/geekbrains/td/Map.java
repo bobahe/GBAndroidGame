@@ -21,6 +21,7 @@ public class Map {
     private int[][] data;
     private TextureRegion textureRegionGrass;
     private TextureRegion textureRegionRoad;
+    private TextureRegion textureRegionWall;
 
     private int[][] routeHelperArray;
 
@@ -30,6 +31,7 @@ public class Map {
 
         textureRegionGrass = Assets.getInstance().getAtlas().findRegion("grass");
         textureRegionRoad = Assets.getInstance().getAtlas().findRegion("road");
+        textureRegionWall = Assets.getInstance().getAtlas().findRegion("wall");
         loadMapFromFile(mapName);
     }
 
@@ -55,9 +57,9 @@ public class Map {
                     batch.draw(textureRegionRoad, i * 80, j * 80);
                 }
                 if (data[i][j] == ELEMENT_WALL) {
-                    batch.setColor(0, 0, 0, 1);
-                    batch.draw(textureRegionRoad, i * 80, j * 80);
-                    batch.setColor(1, 1, 1, 1);
+//                    batch.setColor(0, 0, 0, 1);
+                    batch.draw(textureRegionWall, i * 80, j * 80);
+//                    batch.setColor(1, 1, 1, 1);
                 }
             }
         }

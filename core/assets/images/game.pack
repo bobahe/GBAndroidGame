@@ -13,7 +13,7 @@ animatedKing
   index: -1
 cursor
   rotate: false
-  xy: 568, 102
+  xy: 650, 102
   size: 80, 80
   orig: 80, 80
   offset: 0, 0
@@ -27,21 +27,21 @@ destroyturret
   index: -1
 grass
   rotate: false
-  xy: 814, 102
+  xy: 896, 102
   size: 80, 80
   orig: 80, 80
   offset: 0, 0
   index: -1
 king
   rotate: false
-  xy: 650, 102
+  xy: 732, 102
   size: 80, 80
   orig: 80, 80
   offset: 0, 0
   index: -1
 monster
   rotate: false
-  xy: 896, 102
+  xy: 978, 102
   size: 80, 80
   orig: 80, 80
   offset: 0, 0
@@ -62,14 +62,14 @@ monsterHp
   index: -1
 road
   rotate: false
-  xy: 732, 102
+  xy: 814, 102
   size: 80, 80
   orig: 80, 80
   offset: 0, 0
   index: -1
 setblueturret
   rotate: false
-  xy: 978, 142
+  xy: 1060, 142
   size: 40, 40
   orig: 40, 40
   offset: 0, 0
@@ -83,7 +83,7 @@ setredturret
   index: -1
 shortButton
   rotate: false
-  xy: 486, 102
+  xy: 568, 102
   size: 80, 80
   orig: 80, 80
   offset: 0, 0
@@ -121,5 +121,12 @@ upperPanel
   xy: 2, 184
   size: 1280, 60
   orig: 1280, 60
+  offset: 0, 0
+  index: -1
+wall
+  rotate: false
+  xy: 486, 102
+  size: 80, 80
+  orig: 80, 80
   offset: 0, 0
   index: -1
